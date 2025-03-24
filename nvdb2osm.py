@@ -84,6 +84,15 @@ medium_types = {
 	'X': 'Ukjent'
 }
 
+cycleway_category = {
+	'E': {'hierarchy': 'regional', 'ownership': 'national'},
+	'R': {'hierarchy': 'regional', 'ownership': 'national'},
+	'F': {'hierarchy': 'district', 'ownership': 'county'},
+	'K': {'hierarchy': 'local', 'ownership': 'municipal'},
+	'P': {'hierarchy': '', 'ownership': 'private'},
+	'S': {'hierarchy': '', 'ownership': 'private'}
+}
+
 
 
 # Extension of dict class which returns an empty string if element does not exist
@@ -588,18 +597,24 @@ def tag_highway (segment, lanes, tags, extras):
 		if ref and ref['vegkategori'] != "P":
 			tags[tag_key] = "cycleway"
 			tags['foot'] = "designated"
-			tags['segregated'] = "no"
+			#tags['segregated'] = "no"
 			tags['surface'] = "asphalt"
+			tags['ref'] = get_ref(ref['vegkategori'], ref['nummer'])
+			tags['cycleway:hierarchy'] = cycleway_category[ref['vegkategori']]['hierarchy']
+			tags['ownership'] = cycleway_category[ref['vegkategori']]['ownership']
 		else:
 			tags[tag_key] = "footway"
 			tags['bicycle'] = "yes"
-			tags['segregated'] = "no"
+			#tags['segregated'] = "no"
 
 	elif segment['typeVeg'] == "Sykkelveg":  # Express cycleway
 		tags[tag_key] = "cycleway"
-		tags["foot"] = "designated"
-		tags['segregated'] = "yes"
+		tags["foot"] = "yes"
+		#tags['segregated'] = "yes"
 		tags['surface'] = "asphalt"
+		tags['ref'] = get_ref(ref['vegkategori'], ref['nummer'])
+		tags['cycleway:hierarchy'] = cycleway_category[ref['vegkategori']]['hierarchy']
+		tags['ownership'] = cycleway_category[ref['vegkategori']]['ownership']
 		if len(lanes) == 2 and lanes[0] == "1S" and lanes[1] == "2S":
 			tags['lanes'] = "2"
 
@@ -771,7 +786,7 @@ def tag_object (object_id, properties, tags):
 
 	elif object_id == "856":  # Access restriction
 		restrictions = {
-			'Forbudt for alle kjøretøy': {'motor_vehicle': 'no'},
+			'Forbudt for alle kjøretøy': {'motor_vehicle': 'no', 'bicycle': 'no'},
 			'Forbudt for gående': {'foot': 'no'},
 			'Forbudt for gående og syklende': {'foot': 'no', 'bicycle': 'no'},
 			'Forbudt for lastebil og trekkbil': {'hgv': 'no'},
