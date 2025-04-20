@@ -575,7 +575,8 @@ def tag_highway (segment, lanes, tags, extras):
 	elif segment['typeVeg'] in ["Bilferje", "Passasjerferje"]:  # Ferry
 		tags[tag_key] = "ferry"
 		if ref:
-			tags['ref'] = get_ref(ref['vegkategori'], ref['nummer'])
+			if ref.get('nummer', None):
+				tags['ref'] = get_ref(ref['vegkategori'], ref['nummer'])
 			if ref['vegkategori'] == "F" and ref['nummer'] < 1000:
 				tags['ferry'] = "primary"
 			else:
@@ -599,7 +600,8 @@ def tag_highway (segment, lanes, tags, extras):
 			tags['foot'] = "designated"
 			#tags['segregated'] = "no"
 			tags['surface'] = "asphalt"
-			tags['ref'] = get_ref(ref['vegkategori'], ref['nummer'])
+			if ref.get('nummer', None):
+				tags['ref'] = get_ref(ref['vegkategori'], ref['nummer'])
 			tags['cycleway:hierarchy'] = cycleway_category[ref['vegkategori']]['hierarchy']
 			tags['ownership'] = cycleway_category[ref['vegkategori']]['ownership']
 		else:
@@ -612,7 +614,8 @@ def tag_highway (segment, lanes, tags, extras):
 		tags["foot"] = "yes"
 		#tags['segregated'] = "yes"
 		tags['surface'] = "asphalt"
-		tags['ref'] = get_ref(ref['vegkategori'], ref['nummer'])
+		if ref.get('nummer', None):
+			tags['ref'] = get_ref(ref['vegkategori'], ref['nummer'])
 		tags['cycleway:hierarchy'] = cycleway_category[ref['vegkategori']]['hierarchy']
 		tags['ownership'] = cycleway_category[ref['vegkategori']]['ownership']
 		if len(lanes) == 2 and lanes[0] == "1S" and lanes[1] == "2S":
@@ -2937,15 +2940,15 @@ if __name__ == '__main__':
 	# Run program
 	# municipality_id is identifying entity to generate
 
-	if function == "vegnett" and len(municipality) == 2 and not date_filter:
-		for municipality_id in sorted(list(municipalities.keys())):
-			if len(municipality_id) == 4 and (municipality == "00" or municipality_id[:2] == municipality) and municipality_id >= start_municipality:
-				main_run(url, municipality_id)
-				message("\n")
-
-	else:
-		municipality_id = municipality
-		main_run(url, municipality)
+#	if function == "vegnett" and len(municipality) == 2 and not date_filter:
+#		for municipality_id in sorted(list(municipalities.keys())):
+#			if len(municipality_id) == 4 and (municipality == "00" or municipality_id[:2] == municipality) and municipality_id >= start_municipality:
+#				main_run(url, municipality_id)
+#				message("\n")
+#
+#	else:
+	municipality_id = municipality
+	main_run(url, municipality)
 
 	message ("\nDone\n\n")
 
